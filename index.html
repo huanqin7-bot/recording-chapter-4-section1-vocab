@@ -1,467 +1,403 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Reading Practice (Single Recording)</title>
-  <style>
-    :root{
-      --bg:#0b0f14;
-      --panel:#141a26;
-      --text:#e8eef6;
-      --muted:#9fb0c3;
-      --border:rgba(255,255,255,.10);
-      --accent:#4da3ff;
-      --ok:#34d399;
-      --bad:#fb7185;
-      --radius:16px;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0; padding:16px;
-      background:var(--bg); color:var(--text);
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-    }
-    header{
-      max-width:1100px; margin:0 auto 14px;
-      background:var(--panel); border:1px solid var(--border);
-      border-radius:var(--radius); padding:14px 16px;
-    }
-    h1{margin:0; font-size:20px}
-    .hint{margin-top:6px; color:var(--muted); font-size:14px; line-height:1.35}
-    .wrap{
-      max-width:1100px; margin:0 auto;
-      display:grid; grid-template-columns: 1.15fr .85fr; gap:14px;
-    }
-    @media (max-width: 980px){ .wrap{grid-template-columns:1fr;} }
-    .panel{
-      background:var(--panel); border:1px solid var(--border);
-      border-radius:var(--radius); padding:14px;
-    }
-    .panel h2{margin:0 0 10px; font-size:16px}
-    .sub{margin:0 0 10px; color:var(--muted); font-size:13px; line-height:1.4}
-    .imgbox{
-      border:1px solid var(--border);
-      border-radius:14px;
-      background: rgba(255,255,255,.03);
-      overflow:hidden;
-    }
-    .imgbox img{
-      display:block;
-      width:100%;
-      height:auto;
-    }
-    .small{color:var(--muted); font-size:12px; line-height:1.45}
-    audio{width:100%; height:42px}
-    .grid{
-      display:grid; grid-template-columns:1fr 1fr; gap:10px;
-      margin-bottom:12px;
-    }
-    @media (max-width:700px){ .grid{grid-template-columns:1fr;} }
-    label{display:block; font-size:13px; color:var(--muted); margin:0 0 6px}
-    input{
-      width:100%; padding:12px; font-size:16px;
-      border-radius:12px; border:1px solid var(--border);
-      background:rgba(255,255,255,.04); color:var(--text);
-      outline:none;
-    }
-    .btnrow{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:10px;
-      margin-top:10px;
-    }
-    @media (max-width: 700px){ .btnrow{grid-template-columns:1fr;} }
-    button{
-      width:100%;
-      padding:14px 14px;
-      font-size:16px;
-      font-weight:800;
-      border-radius:14px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.06);
-      color:var(--text);
-      cursor:pointer;
-    }
-    button[disabled]{opacity:.45; cursor:not-allowed;}
-    .primary{border-color:rgba(77,163,255,.55); background:rgba(77,163,255,.18);}
-    .danger{border-color:rgba(251,113,133,.55); background:rgba(251,113,133,.16);}
-    .success{border-color:rgba(52,211,153,.55); background:rgba(52,211,153,.14);}
-    .meter{
-      height:16px; border-radius:999px;
-      border:1px solid var(--border);
-      overflow:hidden;
-      background: rgba(255,255,255,.06);
-      margin-top:12px;
-    }
-    .meter .fill{
-      height:100%;
-      width:0%;
-      background: linear-gradient(90deg, rgba(77,163,255,.9), rgba(52,211,153,.9));
-      transition: width 80ms linear;
-    }
-    .status{
-      display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;
-      color:var(--muted); font-size:13px;
-      margin-top:10px;
-    }
-    .status strong{color:var(--text)}
-    .note{
-      border:1px solid var(--border);
-      border-radius:12px;
-      padding:10px;
-      background: rgba(0,0,0,.12);
-      margin-top:10px;
-    }
-    .pill{
-      display:inline-block;
-      padding:4px 10px;
-      border-radius:999px;
-      border:1px solid var(--border);
-      font-size:12px;
-      color:var(--muted);
-      background: rgba(255,255,255,.03);
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Chinese Vocabulary Wheel</title>
+ 
+<style>
+  body{
+    margin:0;
+    font-family: Arial, Helvetica, sans-serif;
+    background:#f4f6fb;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+  }
+  .app{
+    width:1000px;
+    max-width:95vw;
+    background:#fff;
+    border-radius:20px;
+    padding:20px;
+    box-shadow:0 12px 30px rgba(0,0,0,.15);
+    display:grid;
+    grid-template-columns: 1fr 360px;
+    gap:20px;
+  }
+  h1{
+    margin:0 0 10px;
+    font-size:24px;
+    text-align:center;
+    grid-column:1 / -1;
+  }
+ 
+  /* Wheel */
+  .wheel-area{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+  }
+  .wheel-wrap{
+    position:relative;
+    width:440px;
+    height:440px;
+    max-width:80vw;
+    max-height:80vw;
+  }
+  .pointer{
+    position:absolute;
+    top:-10px;
+    left:50%;
+    transform:translateX(-50%);
+    width:0;height:0;
+    border-left:16px solid transparent;
+    border-right:16px solid transparent;
+    border-bottom:30px solid #111;
+    z-index:5;
+  }
+  .wheel{
+    width:100%;
+    height:100%;
+    border-radius:50%;
+    border:10px solid #111;
+    transition:transform 3s cubic-bezier(.12,.78,.12,1);
+    position:relative;
+    overflow:hidden;
+  }
+  .label{
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform-origin:0 0;
+    font-weight:800;
+    pointer-events:none;
+    white-space:nowrap;
+    color:#111;
+    text-shadow: 0 1px 0 rgba(255,255,255,.6);
+  }
+ 
+  /* Controls */
+  .controls{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    justify-content:center;
+  }
+  .panel{
+    border:1px solid rgba(0,0,0,.12);
+    border-radius:16px;
+    padding:14px;
+    background:#fafafa;
+  }
+  .row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+  select{
+    font-size:16px;
+    padding:10px 12px;
+    border-radius:12px;
+    border:1px solid rgba(0,0,0,.18);
+    background:#fff;
+    width:100%;
+  }
+  .small{
+    font-size:12px;
+    color:#666;
+    line-height:1.5;
+    margin-top:8px;
+  }
+ 
+  .result{
+    text-align:center;
+  }
+  .pinyin{
+    font-size:40px;
+    color:#e53935;
+    font-weight:900;
+    cursor:pointer;
+    user-select:none;
+  }
+  .hanzi{
+    font-size:44px;
+    margin-top:10px;
+    display:none;
+    font-weight:900;
+    user-select:none;
+  }
+  .def{
+    font-size:14px;
+    color:#555;
+    margin-top:8px;
+    display:none;
+    line-height:1.4;
+  }
+ 
+  button{
+    font-size:18px;
+    padding:12px;
+    border-radius:12px;
+    border:none;
+    cursor:pointer;
+  }
+  .spin{ background:#111;color:#fff; }
+  .reveal{ background:#eee; }
+  .ghost{ background:#fff; border:2px solid rgba(0,0,0,.14); }
+ 
+  .count{
+    text-align:center;
+    font-size:13px;
+    color:#666;
+    margin-top:6px;
+  }
+</style>
 </head>
-
+ 
 <body>
-<header>
-  <h1>Reading Practice (Single Recording)</h1>
-  <div class="hint">
-    1) View the text image → 2) Listen to the model → 3) Record once → 4) Download & submit.
-    <br><span class="small">Open via http(s) (local server or hosted link) to allow microphone access.</span>
+<div class="app">
+  <h1>Chinese Vocabulary Wheel (Chapters 1–4)</h1>
+ 
+  <!-- LEFT -->
+  <div class="wheel-area">
+    <div class="wheel-wrap">
+      <div class="pointer"></div>
+      <div id="wheel" class="wheel"></div>
+    </div>
+    <button class="spin" onclick="spin()">SPIN</button>
+    <div class="count" id="countInfo">—</div>
   </div>
-</header>
-
-<div class="wrap">
-  <!-- LEFT: Image with all text -->
-  <section class="panel">
-    <h2>Reading Text (Image)</h2>
-    <p class="sub">Image file: <span class="pill">reading_text.png</span> (same folder as <span class="pill">index.html</span>)</p>
-    <div class="imgbox">
-      <img src="reading_text.png" alt="Reading Text Image" />
-    </div>
-    <p class="small" style="margin-top:10px;">
-      If you don’t see the image, confirm the filename is exactly <span class="pill">reading_text.png</span>.
-    </p>
-  </section>
-
-  <!-- RIGHT: Model audio + single recording -->
-  <section class="panel">
-    <h2>Model & Your Recording</h2>
-
-    <div class="grid">
-      <div>
-        <label for="studentName">Student Name (required)</label>
-        <input id="studentName" placeholder="e.g., Alex Chen" autocomplete="name" />
+ 
+  <!-- RIGHT -->
+  <div class="controls">
+    <div class="panel">
+      <div class="row">
+        <b>Chapter</b>
       </div>
-      <div>
-        <label for="classInfo">Class / Period (optional)</label>
-        <input id="classInfo" placeholder="e.g., Chinese 7A / Period 2" />
+      <div style="margin-top:10px;">
+        <select id="chapterSel">
+          <option value="c1">Chapter 1</option>
+          <option value="c2">Chapter 2</option>
+          <option value="c3">Chapter 3</option>
+          <option value="c4" selected>Chapter 4</option>
+          <option value="all">All (Ch.1–4)</option>
+        </select>
+      </div>
+      <div class="small">
+        Tip: “All” has 70+ words, so the wheel labels become tiny.  
+        For homework, it’s better to assign one chapter at a time.
       </div>
     </div>
-
-    <div class="note">
-      <div class="small">Model Audio (<span class="pill">audio/1.mp3</span>)</div>
-      <audio id="demoAudio" controls preload="auto" src="audio/1.mp3"></audio>
-      <p class="small" style="margin:8px 0 0;">
-        If audio doesn’t play, confirm the file path is exactly <span class="pill">audio/1.mp3</span>.
-      </p>
+ 
+    <div class="panel result">
+      <div id="pinyin" class="pinyin" title="Click to reveal/hide">—</div>
+      <div id="hanzi" class="hanzi">—</div>
+      <div id="def" class="def">—</div>
+      <div style="display:flex; gap:10px; margin-top:14px;">
+        <button class="reveal" onclick="reveal()" style="flex:1;">Reveal Word</button>
+        <button class="ghost" onclick="hideWord()" style="flex:1;">Hide</button>
+      </div>
     </div>
-
-    <div class="note">
-      <div class="small">Your Recording (only ONE will be kept)</div>
-      <audio id="studentAudio" controls></audio>
-
-      <div class="btnrow">
-        <button class="primary" id="btnStart">Start Recording</button>
-        <button class="danger" id="btnStop" disabled>Stop Recording</button>
-        <button class="success" id="btnDownload" disabled>Download Recording</button>
-        <button id="btnReset">Reset (Record Again)</button>
-      </div>
-
-      <div class="meter" title="Volume meter">
-        <div class="fill" id="meterFill"></div>
-      </div>
-
-      <div class="status">
-        <div>Status: <strong id="recStatus">Ready</strong></div>
-        <div>Time: <strong id="recTime">00:00</strong></div>
-      </div>
-
-      <p class="small" id="info" style="margin-top:10px;">
-        This page keeps only one recording. Click <span class="pill">Reset</span> to re-record.
-      </p>
-    </div>
-  </section>
+  </div>
 </div>
-
+ 
 <script>
-  const studentNameEl = document.getElementById('studentName');
-  const classInfoEl = document.getElementById('classInfo');
-
-  const btnStart = document.getElementById('btnStart');
-  const btnStop = document.getElementById('btnStop');
-  const btnDownload = document.getElementById('btnDownload');
-  const btnReset = document.getElementById('btnReset');
-
-  const demoAudio = document.getElementById('demoAudio');
-  const studentAudio = document.getElementById('studentAudio');
-
-  const meterFill = document.getElementById('meterFill');
-  const recStatusEl = document.getElementById('recStatus');
-  const recTimeEl = document.getElementById('recTime');
-  const infoEl = document.getElementById('info');
-
-  let mediaRecorder = null;
-  let chunks = [];
-  let recordingBlob = null;
-  let recordingUrl = null;
-
-  // volume meter
-  let audioContext = null;
-  let analyser = null;
-  let rafId = null;
-  let micStream = null;
-
-  // timer
-  let timer = null;
-  let startAt = 0;
-
-  // single recording guard (only one saved at a time)
-  let hasRecording = false;
-
-  function pad2(n){ return String(n).padStart(2,'0'); }
-  function fmtTime(ms){
-    const s = Math.floor(ms/1000);
-    const m = Math.floor(s/60);
-    const r = s % 60;
-    return `${pad2(m)}:${pad2(r)}`;
+/* ========= FULL VOCAB: Chapters 1–4 (from your list) ========= */
+const VOCAB = {
+  c1: [
+    {hanzi:"你好", pinyin:"nǐ hǎo", def:"hello"},
+    {hanzi:"你", pinyin:"nǐ", def:"you"},
+    {hanzi:"好", pinyin:"hǎo", def:"fine, good, nice; OK, it's settled"},
+    {hanzi:"是", pinyin:"shì", def:"to be"},
+    {hanzi:"老师", pinyin:"lǎoshī", def:"teacher"},
+    {hanzi:"吗", pinyin:"ma", def:"(question word)"},
+    {hanzi:"我", pinyin:"wǒ", def:"I, me"},
+    {hanzi:"不", pinyin:"bù", def:"no, not"},
+    {hanzi:"学生", pinyin:"xuéshēng", def:"student"},
+    {hanzi:"再见", pinyin:"zàijiàn", def:"goodbye, see you again"},
+    {hanzi:"一", pinyin:"yī", def:"one"},
+    {hanzi:"二", pinyin:"èr", def:"two"},
+    {hanzi:"三", pinyin:"sān", def:"three"},
+    {hanzi:"四", pinyin:"sì", def:"four"},
+    {hanzi:"五", pinyin:"wǔ", def:"five"},
+    {hanzi:"六", pinyin:"liù", def:"six"},
+    {hanzi:"七", pinyin:"qī", def:"seven"},
+    {hanzi:"八", pinyin:"bā", def:"eight"},
+    {hanzi:"九", pinyin:"jiǔ", def:"nine"},
+    {hanzi:"十", pinyin:"shí", def:"ten"}
+  ],
+  c2: [
+    {hanzi:"叫", pinyin:"jiào", def:"to be called"},
+    {hanzi:"什么", pinyin:"shénme", def:"what"},
+    {hanzi:"名字", pinyin:"míngzi", def:"name"},
+    {hanzi:"的", pinyin:"de", def:"(possessive particle)"},
+    {hanzi:"英文", pinyin:"Yīngwén", def:"English (language)"},
+    {hanzi:"中文", pinyin:"Zhōngwén", def:"Chinese (language)"},
+    {hanzi:"她", pinyin:"tā", def:"she, her"},
+    {hanzi:"谁", pinyin:"shéi", def:"who"},
+    {hanzi:"同学", pinyin:"tóngxué", def:"classmate"},
+    {hanzi:"有", pinyin:"yǒu", def:"to have"},
+    {hanzi:"没有", pinyin:"méiyǒu", def:"to not have"},
+    {hanzi:"他", pinyin:"tā", def:"he, him"},
+    {hanzi:"他们", pinyin:"tāmen", def:"they, them (if anyone in the group is male)"},
+    {hanzi:"和", pinyin:"hé", def:"and"},
+    {hanzi:"她们", pinyin:"tāmen", def:"they, them (if everyone in the group is female)"},
+    {hanzi:"也", pinyin:"yě", def:"also, too, as well as"},
+    {hanzi:"你们", pinyin:"nǐmen", def:"you (plural)"},
+    {hanzi:"我们", pinyin:"wǒmen", def:"we, us"},
+    {hanzi:"朋友", pinyin:"péngyou", def:"friend"}
+  ],
+  c3: [
+    {hanzi:"哥哥", pinyin:"gēge", def:"older brother"},
+    {hanzi:"姐姐", pinyin:"jiějie", def:"older sister"},
+    {hanzi:"几", pinyin:"jǐ", def:"how many"},
+    {hanzi:"个", pinyin:"gè", def:"(measure word for people and many objects)"},
+    {hanzi:"弟弟", pinyin:"dìdi", def:"younger brother"},
+    {hanzi:"妹妹", pinyin:"mèimei", def:"younger sister"},
+    {hanzi:"爸爸", pinyin:"bàba", def:"father, dad"},
+    {hanzi:"妈妈", pinyin:"māma", def:"mother, mom"},
+    {hanzi:"喜欢", pinyin:"xǐhuan", def:"to like"},
+    {hanzi:"看", pinyin:"kàn", def:"to look at, to watch, to read, to see"},
+    {hanzi:"书", pinyin:"shū", def:"book"},
+    {hanzi:"很", pinyin:"hěn", def:"very"},
+    {hanzi:"电视", pinyin:"diànshì", def:"television"},
+    {hanzi:"不太", pinyin:"bú tài", def:"not really, not very"},
+    {hanzi:"可是", pinyin:"kěshì", def:"but"},
+    {hanzi:"宠物", pinyin:"chǒngwù", def:"pet (animal)"},
+    {hanzi:"只", pinyin:"zhī", def:"(measure word for some animals)"},
+    {hanzi:"它", pinyin:"tā", def:"it (for animals and things)"},
+    {hanzi:"猫", pinyin:"māo", def:"cat"},
+    {hanzi:"狗", pinyin:"gǒu", def:"dog"}
+  ],
+  c4: [
+    {hanzi:"都", pinyin:"dōu", def:"all, both"},
+    {hanzi:"学", pinyin:"xué", def:"to learn, to study"},
+    {hanzi:"对", pinyin:"duì", def:"right, correct"},
+    {hanzi:"中国", pinyin:"Zhōngguó", def:"China"},
+    {hanzi:"美国", pinyin:"Měiguó", def:"United States of America"},
+    {hanzi:"人", pinyin:"rén", def:"person, people"},
+    {hanzi:"这", pinyin:"zhè", def:"this"},
+    {hanzi:"知道", pinyin:"zhīdào", def:"to know"},
+    {hanzi:"北京", pinyin:"Běijīng", def:"Beijing"},
+    {hanzi:"那", pinyin:"nà", def:"that"},
+    {hanzi:"还是", pinyin:"háishi", def:"or (in questions)"},
+    {hanzi:"在", pinyin:"zài", def:"to be at, to be in (a place)"},
+    {hanzi:"哪儿", pinyin:"nǎr", def:"where"},
+    {hanzi:"小区", pinyin:"xiǎoqū", def:"neighborhood, apartment complex"},
+    {hanzi:"学校", pinyin:"xuéxiào", def:"school"},
+    {hanzi:"现在", pinyin:"xiànzài", def:"now, at this time"},
+    {hanzi:"星期", pinyin:"xīngqī", def:"week"},
+    {hanzi:"家", pinyin:"jiā", def:"home"}
+  ]
+};
+ 
+function getList(key){
+  if (key === "all") return [...VOCAB.c1, ...VOCAB.c2, ...VOCAB.c3, ...VOCAB.c4];
+  return VOCAB[key] || [];
+}
+ 
+/* ========= Build Wheel ========= */
+const wheel = document.getElementById("wheel");
+const pinyinEl = document.getElementById("pinyin");
+const hanziEl = document.getElementById("hanzi");
+const defEl = document.getElementById("def");
+const chapterSel = document.getElementById("chapterSel");
+const countInfo = document.getElementById("countInfo");
+ 
+let rotation = 0;
+let currentIndex = -1;
+let currentList = [];
+ 
+function clearWheel(){
+  wheel.innerHTML = "";
+  wheel.style.background = "";
+  wheel.style.transform = "rotate(0deg)";
+  rotation = 0;
+}
+ 
+function buildWheel(){
+  clearWheel();
+  currentList = getList(chapterSel.value);
+  const n = currentList.length;
+  countInfo.textContent = `Words in wheel: ${n}`;
+ 
+  const slice = 360 / n;
+  const bg = [];
+ 
+  // Label size auto
+  let font = 14;
+  if (n > 20) font = 12;
+  if (n > 30) font = 10;
+  if (n > 45) font = 9;
+  if (n > 60) font = 8;
+ 
+  for(let i=0;i<n;i++){
+    bg.push(`hsl(${i*360/n} 80% 80%) ${i*slice}deg ${(i+1)*slice}deg`);
+    const label = document.createElement("div");
+    label.className = "label";
+    label.style.fontSize = font + "px";
+    const mid = i*slice + slice/2;
+    label.style.transform =
+      `rotate(${mid}deg) translate(160px) rotate(${-mid}deg)`;
+    label.textContent = currentList[i].pinyin;
+    wheel.appendChild(label);
   }
-
-  function setStatus(text, color){
-    recStatusEl.textContent = text;
-    recStatusEl.style.color = color || '';
-  }
-
-  function setButtons(state){
-    // state: 'ready' | 'recording' | 'done'
-    if (state === 'ready'){
-      btnStart.disabled = false;
-      btnStop.disabled = true;
-      btnDownload.disabled = true;
-    } else if (state === 'recording'){
-      btnStart.disabled = true;
-      btnStop.disabled = false;
-      btnDownload.disabled = true;
-    } else if (state === 'done'){
-      btnStart.disabled = true;      // prevent new recording unless reset
-      btnStop.disabled = true;
-      btnDownload.disabled = false;
-    }
-  }
-
-  function stopTimer(){
-    if (timer) clearInterval(timer);
-    timer = null;
-  }
-
-  function startTimer(){
-    startAt = Date.now();
-    recTimeEl.textContent = '00:00';
-    stopTimer();
-    timer = setInterval(()=>{
-      recTimeEl.textContent = fmtTime(Date.now() - startAt);
-    }, 250);
-  }
-
-  function stopMeter(){
-    if (rafId) cancelAnimationFrame(rafId);
-    rafId = null;
-    meterFill.style.width = '0%';
-
-    if (audioContext){
-      try { audioContext.close(); } catch(e){}
-    }
-    audioContext = null;
-    analyser = null;
-
-    if (micStream){
-      micStream.getTracks().forEach(t => t.stop());
-    }
-    micStream = null;
-  }
-
-  async function startMeter(stream){
-    micStream = stream;
-    audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const source = audioContext.createMediaStreamSource(stream);
-    analyser = audioContext.createAnalyser();
-    analyser.fftSize = 1024;
-    source.connect(analyser);
-
-    const data = new Uint8Array(analyser.fftSize);
-    const loop = ()=>{
-      if (!analyser) return;
-      analyser.getByteTimeDomainData(data);
-      let sum = 0;
-      for (let i=0; i<data.length; i++){
-        const v = (data[i]-128)/128;
-        sum += v*v;
-      }
-      const rms = Math.sqrt(sum / data.length);
-      const pct = Math.min(100, Math.max(0, Math.round(rms * 220)));
-      meterFill.style.width = pct + '%';
-      rafId = requestAnimationFrame(loop);
-    };
-    loop();
-  }
-
-  function clearRecording(){
-    if (recordingUrl){
-      URL.revokeObjectURL(recordingUrl);
-      recordingUrl = null;
-    }
-    recordingBlob = null;
-    studentAudio.removeAttribute('src');
-    hasRecording = false;
-    recTimeEl.textContent = '00:00';
-    setStatus('Ready');
-    setButtons('ready');
-    infoEl.textContent = 'This page keeps only one recording. Click Reset to re-record.';
-  }
-
-  function pickBestMimeType(){
-    // Chrome usually supports audio/webm; some Safari versions support audio/mp4.
-    const candidates = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4'];
-    for (const t of candidates){
-      if (window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t)) return t;
-    }
-    return '';
-  }
-
-  function sanitizeName(s){
-    return (s || '').trim().replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_\-]/g, '');
-  }
-
-  btnStart.addEventListener('click', async ()=>{
-    const studentName = studentNameEl.value.trim();
-    if (!studentName){
-      alert('Please enter your student name first.');
-      studentNameEl.focus();
-      return;
-    }
-
-    if (hasRecording){
-      alert('A recording already exists on this page. Click "Reset" if you want to record again.');
-      return;
-    }
-
-    // stop model audio to reduce echo
-    try { demoAudio.pause(); } catch(e){}
-
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
-      alert('Recording is not supported in this browser. Please use the latest Chrome or Safari.');
-      return;
-    }
-
-    let stream;
-    try{
-      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    }catch(err){
-      alert('Microphone permission was denied. Please allow microphone access and try again.');
-      return;
-    }
-
-    // start meter
-    try { await startMeter(stream); } catch(e) {}
-
-    chunks = [];
-    const mimeType = pickBestMimeType();
-    try{
-      mediaRecorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
-    }catch(err){
-      stopMeter();
-      alert('Could not start recording on this browser. Please try Chrome (recommended).');
-      return;
-    }
-
-    mediaRecorder.ondataavailable = (e)=>{
-      if (e.data && e.data.size > 0) chunks.push(e.data);
-    };
-
-    mediaRecorder.onstop = ()=>{
-      stopTimer();
-      stopMeter();
-
-      const type = mediaRecorder.mimeType || (chunks[0] && chunks[0].type) || 'audio/webm';
-      recordingBlob = new Blob(chunks, { type });
-      recordingUrl = URL.createObjectURL(recordingBlob);
-
-      studentAudio.src = recordingUrl;
-      hasRecording = true;
-
-      setStatus('Recorded', 'rgba(52,211,153,.95)');
-      setButtons('done');
-
-      infoEl.textContent = 'Recording saved. Click Download to submit, or click Reset to re-record.';
-    };
-
-    try{
-      mediaRecorder.start();
-      setStatus('Recording…', 'rgba(77,163,255,.95)');
-      setButtons('recording');
-      startTimer();
-    }catch(err){
-      stopTimer();
-      stopMeter();
-      alert('Failed to start recording. Please refresh the page and try again.');
-    }
-  });
-
-  btnStop.addEventListener('click', ()=>{
-    if (!mediaRecorder) return;
-    try{
-      if (mediaRecorder.state !== 'inactive') mediaRecorder.stop();
-    }catch(e){}
-  });
-
-  btnDownload.addEventListener('click', ()=>{
-    if (!recordingUrl || !recordingBlob) return;
-
-    const studentName = sanitizeName(studentNameEl.value) || 'Student';
-    const classInfo = sanitizeName(classInfoEl.value);
-    const date = new Date().toISOString().slice(0,10);
-
-    const ext = recordingBlob.type.includes('mp4') ? 'm4a'
-            : recordingBlob.type.includes('webm') ? 'webm'
-            : 'webm';
-
-    const filename = classInfo
-      ? `${studentName}_${classInfo}_Reading_${date}.${ext}`
-      : `${studentName}_Reading_${date}.${ext}`;
-
-    const a = document.createElement('a');
-    a.href = recordingUrl;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-  });
-
-  btnReset.addEventListener('click', ()=>{
-    if (!hasRecording){
-      // still allow reset to clear any stuck state
-      clearRecording();
-      return;
-    }
-    const ok = confirm('Reset will delete the current recording on this page. Continue?');
-    if (ok) clearRecording();
-  });
-
-  // Init
-  clearRecording();
+  wheel.style.background = `conic-gradient(${bg.join(",")})`;
+ 
+  // reset result
+  currentIndex = -1;
+  pinyinEl.textContent = "—";
+  hanziEl.style.display = "none";
+  defEl.style.display = "none";
+}
+ 
+chapterSel.addEventListener("change", buildWheel);
+buildWheel();
+ 
+/* ========= Spin ========= */
+function spin(){
+  const n = currentList.length;
+  if (!n) return;
+  currentIndex = Math.floor(Math.random()*n);
+ 
+  const slice = 360 / n;
+  const targetAngle = 360*5 + (360 - (currentIndex*slice + slice/2));
+  rotation += targetAngle;
+  wheel.style.transform = `rotate(${rotation}deg)`;
+ 
+  pinyinEl.textContent = "—";
+  hanziEl.style.display = "none";
+  defEl.style.display = "none";
+ 
+  setTimeout(()=>{
+    pinyinEl.textContent = currentList[currentIndex].pinyin;
+  },3000);
+}
+ 
+function reveal(){
+  if(currentIndex < 0) return;
+  hanziEl.textContent = currentList[currentIndex].hanzi;
+  defEl.textContent = currentList[currentIndex].def;
+  hanziEl.style.display = "block";
+  defEl.style.display = "block";
+}
+ 
+function hideWord(){
+  hanziEl.style.display = "none";
+  defEl.style.display = "none";
+}
+ 
+// Click pinyin to toggle
+pinyinEl.addEventListener("click", ()=>{
+  if (currentIndex < 0) return;
+  if (hanziEl.style.display === "none") reveal();
+  else hideWord();
+});
 </script>
 </body>
 </html>
