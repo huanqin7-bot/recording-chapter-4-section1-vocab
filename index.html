@@ -124,7 +124,7 @@
     }
   </style>
 </head>
-
+ 
 <body>
 <header>
   <h1>Reading Practice (Single Recording)</h1>
@@ -133,7 +133,7 @@
     <br><span class="small">Open via http(s) (local server or hosted link) to allow microphone access.</span>
   </div>
 </header>
-
+ 
 <div class="wrap">
   <!-- LEFT: Image with all text -->
   <section class="panel">
@@ -146,11 +146,11 @@
       If you don’t see the image, confirm the filename is exactly <span class="pill">reading_text.png</span>.
     </p>
   </section>
-
+ 
   <!-- RIGHT: Model audio + single recording -->
   <section class="panel">
     <h2>Model & Your Recording</h2>
-
+ 
     <div class="grid">
       <div>
         <label for="studentName">Student Name (required)</label>
@@ -161,7 +161,7 @@
         <input id="classInfo" placeholder="e.g., Chinese 7A / Period 2" />
       </div>
     </div>
-
+ 
     <!-- Model Audio 1 -->
     <div class="note">
       <div class="small">Model Audio 1 (<span class="pill">audio/1.mp3</span>)</div>
@@ -170,7 +170,7 @@
         If audio doesn’t play, confirm the file path is exactly <span class="pill">audio/1.mp3</span>.
       </p>
     </div>
-
+ 
     <!-- Model Audio 2 -->
     <div class="note">
       <div class="small">Model Audio 2 (<span class="pill">audio/2.mp3</span>)</div>
@@ -179,70 +179,70 @@
         If audio doesn’t play, confirm the file path is exactly <span class="pill">audio/2.mp3</span>.
       </p>
     </div>
-
+ 
     <div class="note">
       <div class="small">Your Recording (only ONE will be kept)</div>
       <audio id="studentAudio" controls></audio>
-
+ 
       <div class="btnrow">
         <button class="primary" id="btnStart">Start Recording</button>
         <button class="danger" id="btnStop" disabled>Stop Recording</button>
         <button class="success" id="btnDownload" disabled>Download Recording</button>
         <button id="btnReset">Reset (Record Again)</button>
       </div>
-
+ 
       <div class="meter" title="Volume meter">
         <div class="fill" id="meterFill"></div>
       </div>
-
+ 
       <div class="status">
         <div>Status: <strong id="recStatus">Ready</strong></div>
         <div>Time: <strong id="recTime">00:00</strong></div>
       </div>
-
+ 
       <p class="small" id="info" style="margin-top:10px;">
         This page keeps only one recording. Click <span class="pill">Reset</span> to re-record.
       </p>
     </div>
   </section>
 </div>
-
+ 
 <script>
   const studentNameEl = document.getElementById('studentName');
   const classInfoEl = document.getElementById('classInfo');
-
+ 
   const btnStart = document.getElementById('btnStart');
   const btnStop = document.getElementById('btnStop');
   const btnDownload = document.getElementById('btnDownload');
   const btnReset = document.getElementById('btnReset');
-
+ 
   const demoAudio1 = document.getElementById('demoAudio1');
   const demoAudio2 = document.getElementById('demoAudio2');
   const studentAudio = document.getElementById('studentAudio');
-
+ 
   const meterFill = document.getElementById('meterFill');
   const recStatusEl = document.getElementById('recStatus');
   const recTimeEl = document.getElementById('recTime');
   const infoEl = document.getElementById('info');
-
+ 
   let mediaRecorder = null;
   let chunks = [];
   let recordingBlob = null;
   let recordingUrl = null;
-
+ 
   // volume meter
   let audioContext = null;
   let analyser = null;
   let rafId = null;
   let micStream = null;
-
+ 
   // timer
   let timer = null;
   let startAt = 0;
-
+ 
   // single recording guard (only one saved at a time)
   let hasRecording = false;
-
+ 
   function pad2(n){ return String(n).padStart(2,'0'); }
   function fmtTime(ms){
     const s = Math.floor(ms/1000);
@@ -250,12 +250,12 @@
     const r = s % 60;
     return `${pad2(m)}:${pad2(r)}`;
   }
-
+ 
   function setStatus(text, color){
     recStatusEl.textContent = text;
     recStatusEl.style.color = color || '';
   }
-
+ 
   function setButtons(state){
     // state: 'ready' | 'recording' | 'done'
     if (state === 'ready'){
@@ -272,12 +272,12 @@
       btnDownload.disabled = false;
     }
   }
-
+ 
   function stopTimer(){
     if (timer) clearInterval(timer);
     timer = null;
   }
-
+ 
   function startTimer(){
     startAt = Date.now();
     recTimeEl.textContent = '00:00';
@@ -286,24 +286,24 @@
       recTimeEl.textContent = fmtTime(Date.now() - startAt);
     }, 250);
   }
-
+ 
   function stopMeter(){
     if (rafId) cancelAnimationFrame(rafId);
     rafId = null;
     meterFill.style.width = '0%';
-
+ 
     if (audioContext){
       try { audioContext.close(); } catch(e){}
     }
     audioContext = null;
     analyser = null;
-
+ 
     if (micStream){
       micStream.getTracks().forEach(t => t.stop());
     }
     micStream = null;
   }
-
+ 
   async function startMeter(stream){
     micStream = stream;
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -311,7 +311,7 @@
     analyser = audioContext.createAnalyser();
     analyser.fftSize = 1024;
     source.connect(analyser);
-
+ 
     const data = new Uint8Array(analyser.fftSize);
     const loop = ()=>{
       if (!analyser) return;
@@ -328,7 +328,7 @@
     };
     loop();
   }
-
+ 
   function clearRecording(){
     if (recordingUrl){
       URL.revokeObjectURL(recordingUrl);
@@ -342,7 +342,7 @@
     setButtons('ready');
     infoEl.textContent = 'This page keeps only one recording. Click Reset to re-record.';
   }
-
+ 
   function pickBestMimeType(){
     // Chrome usually supports audio/webm; some Safari versions support audio/mp4.
     const candidates = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4'];
@@ -351,11 +351,11 @@
     }
     return '';
   }
-
+ 
   function sanitizeName(s){
     return (s || '').trim().replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_\-]/g, '');
   }
-
+ 
   btnStart.addEventListener('click', async ()=>{
     const studentName = studentNameEl.value.trim();
     if (!studentName){
@@ -363,12 +363,12 @@
       studentNameEl.focus();
       return;
     }
-
+ 
     if (hasRecording){
       alert('A recording already exists on this page. Click "Reset" if you want to record again.');
       return;
     }
-
+ 
     // stop model audios to avoid echo
     try {
       demoAudio1.pause();
@@ -376,12 +376,12 @@
       demoAudio2.pause();
       demoAudio2.currentTime = 0;
     } catch (e) {}
-
+ 
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
       alert('Recording is not supported in this browser. Please use the latest Chrome or Safari.');
       return;
     }
-
+ 
     let stream;
     try{
       stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -389,10 +389,10 @@
       alert('Microphone permission was denied. Please allow microphone access and try again.');
       return;
     }
-
+ 
     // start meter
     try { await startMeter(stream); } catch(e) {}
-
+ 
     chunks = [];
     const mimeType = pickBestMimeType();
     try{
@@ -402,28 +402,28 @@
       alert('Could not start recording on this browser. Please try Chrome (recommended).');
       return;
     }
-
+ 
     mediaRecorder.ondataavailable = (e)=>{
       if (e.data && e.data.size > 0) chunks.push(e.data);
     };
-
+ 
     mediaRecorder.onstop = ()=>{
       stopTimer();
       stopMeter();
-
+ 
       const type = mediaRecorder.mimeType || (chunks[0] && chunks[0].type) || 'audio/webm';
       recordingBlob = new Blob(chunks, { type });
       recordingUrl = URL.createObjectURL(recordingBlob);
-
+ 
       studentAudio.src = recordingUrl;
       hasRecording = true;
-
+ 
       setStatus('Recorded', 'rgba(52,211,153,.95)');
       setButtons('done');
-
+ 
       infoEl.textContent = 'Recording saved. Click Download to submit, or click Reset to re-record.';
     };
-
+ 
     try{
       mediaRecorder.start();
       setStatus('Recording…', 'rgba(77,163,255,.95)');
@@ -435,29 +435,29 @@
       alert('Failed to start recording. Please refresh the page and try again.');
     }
   });
-
+ 
   btnStop.addEventListener('click', ()=>{
     if (!mediaRecorder) return;
     try{
       if (mediaRecorder.state !== 'inactive') mediaRecorder.stop();
     }catch(e){}
   });
-
+ 
   btnDownload.addEventListener('click', ()=>{
     if (!recordingUrl || !recordingBlob) return;
-
+ 
     const studentName = sanitizeName(studentNameEl.value) || 'Student';
     const classInfo = sanitizeName(classInfoEl.value);
     const date = new Date().toISOString().slice(0,10);
-
+ 
     const ext = recordingBlob.type.includes('mp4') ? 'm4a'
             : recordingBlob.type.includes('webm') ? 'webm'
             : 'webm';
-
+ 
     const filename = classInfo
       ? `${studentName}_${classInfo}_Reading_${date}.${ext}`
       : `${studentName}_Reading_${date}.${ext}`;
-
+ 
     const a = document.createElement('a');
     a.href = recordingUrl;
     a.download = filename;
@@ -465,7 +465,7 @@
     a.click();
     a.remove();
   });
-
+ 
   btnReset.addEventListener('click', ()=>{
     if (!hasRecording){
       clearRecording();
@@ -474,7 +474,7 @@
     const ok = confirm('Reset will delete the current recording on this page. Continue?');
     if (ok) clearRecording();
   });
-
+ 
   // Init
   clearRecording();
 </script>
